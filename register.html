@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <title>Register</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>Εγγραφή - Στοιχεία Επικοινωνίας</h2>
+  <form>
+    <div class="form-group">
+      <label for="lname">Επώνυμο:</label>
+      <input type="text" class="form-control" id="lname" maxlength="25" placeholder="Μέγιστο 25 χαρακτήρες"/>
+    </div>
+    <div class="form-group">
+      <label for="fname">Όνομα:</label>
+      <input type="text" class="form-control" id="fname" maxlength="25" placeholder="Μέγιστο 25 χαρακτήρες"/>
+    </div>
+    <div class="form-group">
+      <label for="birthday">Ημερομηνία γέννησης:</label>
+      <input type="date" class="form-control" id="birthday"/>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" placeholder=""/>
+    </div>
+    <div class="form-group">
+      <label for="username">Επέλεξε όνομα χρήστη:</label>
+      <input type="text" class="form-control" id="username" maxlength="20" placeholder="Μέγιστο 25 χαρακτήρες"/>
+    </div>
+	<div class="form-group">
+      <label for="pwd">Επέλεξε Password:</label>
+      <input type="password" class="form-control" id="pwd" placeholder="Ελάχιστο 7 χαρακτήρες"/>
+    </div>
+    <div class="form-group">
+      <label for="rpwd">Επανέλαβε το Password:</label>
+      <input type="password" class="form-control" id="rpwd" placeholder="Ελάχιστο 7 χαρακτήρες"/>
+    </div>
+    <button type="submit" class="btn btn-default">Υποβολή</button>
+  </form>
+</div>
+
+</body>
+</html>
