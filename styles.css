@@ -22,10 +22,36 @@
     }
     
     /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
+     @media screen and (max-width: 1024px) {
       .sidenav {
-        height: auto;
-        padding: 15px;
+       height: auto;
+       padding: 15px;
+	   width: 15%;
       }
+	  
+	@media screen and (max-width:720px) {
+    .sidenav  {
+	height: auto;
+    padding: 12px;
+	width: 13.1%;
+	
+	}
+}
+
+@media screen and (max-width: 420px) {
+    .sidenav {
+	height: auto;
+    padding: 9px;
+	width: 12.5%;}
+  
+
+@media screen and (max-width: 290px) {
+    .sidenav {
+	height: auto;
+    padding: 6px;
+	width: 10%;
+	}
+}
+	  
       .row.content {height:auto;} 
-    }
+    } 
