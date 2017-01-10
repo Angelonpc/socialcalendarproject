@@ -2,7 +2,17 @@
 <script>
 $(document).ready(function(){
 	var today = new Date();
-//	$(".social").append('<div class="fb-share-button" data-href="" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='+'http://sakis.kasnakis/webCal/index.php/maincal/display'+'kid_directed_site=true>������������</a></div>');
+	
+	$.ajaxSetup({ cache: true });
+	$.getScript('//connect.facebook.net/el_GR/sdk.js', function(){
+    FB.init({
+      appId: '127368064430519',
+      version: 'v2.7' // or v2.1, v2.2, v2.3, ...
+    }); 
+  
+    $('#loginbutton,#feedbutton').removeAttr('disabled');
+    FB.getLoginStatus(updateStatusCallback);
+  });
     $(".day_num").click(function(event){
             	
     	var dd=$(this).html();
@@ -63,8 +73,8 @@ $(document).ready(function(){
         var yyyy = today.getFullYear();
         
         strtoday = yyyy+'-'+mm+'-'+dd;      
-        $("#eventdate").val(strtoday);  
-        $("#eventdescr").val(str.split('|')[2]);
+        $("#eventdate").val(strtoday); 
+		$("#eventdescr").val(str.split('|')[2]);
         });
 });
 </script>
@@ -76,15 +86,44 @@ $(function() {
     $("#eventtime").timepicker({ 'timeFormat': 'H:i:s' });
 });
 </script>
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/el_GR/sdk.js#xfbml=1&version=v2.8&appId=127368064430519";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<style>
+table, th, td,th {
+border-style: solid;
+		border-width:1px;
+		border-color:#cbd0d8;
+}
+th {
+	text-align:center;
+	font-style:bold; 
+}
 
+
+    tr.header{
+	text-align: center;width:14%;
+		 background-color:#DFFFEE;
+}
+
+	td,td.day{
+		 text-align: center;width:14%;
+		 background-color:#DFE6E3;
+		 font-weight: bold;
+	}
+	td.day:hover {
+		background-color:#D5DEDB;
+	}
+	.grammi:hover{
+		background-color:#ccffff;
+	}
+	.grammi{
+		background-color:#e6ffff;
+		border-style: solid;
+		border-width:1px;
+		border-color:#cbd0d8;
+		}
+</style>
+<?php
+	if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) {
+?>
  <div class="container">
         <div class="row">
         <?php if (validation_errors()) : ?>
@@ -104,7 +143,7 @@ $(function() {
 		
 		<div class="col-md-12">
 			<?= form_open() ?>
-        <table class=table>
+        <table class="table">
         	<tr>
         		<td>
         		<div class="form-group">
@@ -131,33 +170,22 @@ $(function() {
 				</div>
 				</td>
 				<td>
-				<div class="form-group">
-					<label for="adddelete">Add/Delete</label>
-					<input type="checkbox" class="form-control" id="adddelete" name="adddelete" placeholder="Diagrafi;">
-				</div>
-				</td>
-				<td>
 					<div class="form-group">
-					<input type="submit" class="btn btn-default" id="add_delete" value="Add/Delete">
+					<input type="submit" class="btn btn-info" id="btn_add" name="btn_add" value="Add/Update">
+					<button id="facebook" onclick="myFacebookLogin()"><img src='<?php echo base_url(); ?>assets/img/facebook.jpg' height="20px" width="40px" ></button></div>
+				</div>
+				
+					<div class="form-group">
+					<input type="submit" class="btn btn-info" id="btn_delete" name="btn_delete"  value="Delete">
+					<button name="cancel" type="reset" class="btn btn-info">Cancel</button>
 				</div>
 				</td> 
 			</tr>
 			
         </table>
         </form>    
-<script>
-// Only works after `FB.init` is called
-function myFacebookLogin() {
-  FB.login(function(){
-  // Note: The call will only work if you accept the permission request
-  FB.api('/me/feed', 'post', {message:'test'});
-}, {scope: 'publish_actions'});
-}
-</script>
 		
 		<?php 
-		echo $_SESSION['username'];
-		if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) {
 			echo $calendar; 
 		}
 		else 
@@ -165,8 +193,19 @@ function myFacebookLogin() {
 			echo 'no login';
 		}
 		?>
-		<div class="social"><button onclick="myFacebookLogin()">Share to Facebook</button></div>	
-		
+				
         </div>
+<script>
+// Only works after `FB.init` is called
+function myFacebookLogin() {
+var str="Ο χρήστης <?php echo $_SESSION['username'];?> κοινοποίησε ένα συμβάν στο Social Calendar. Στις "+$("#eventdate").val()+" ώρα: "+$("#eventtime").val()+". Συμβάν: "+$("#eventdescr").val()+" http://sakis.kasnakis.gr/webCal/index.php/maincal/display";
+  FB.login(function(){
+  // Note: The call will only work if you accept the permission request
+  
+  FB.api('/me/feed', 'post', {message:str});
+}, {scope: 'publish_actions'});}
+
+</script>
+		
         </div>
       </main>

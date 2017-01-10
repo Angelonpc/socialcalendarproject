@@ -21,7 +21,23 @@ class Event_model extends CI_Model {
 		
 	}
 	
+	public function event_exist($uid,$date, $time){
+		return $this->db->select('uid','date','time','data')->from('events')
+		->where('date',$date)->where('uid',$uid)->where('time',$time)->count_all_results();
+	}
 	
+	public function update_event($uid,$date, $time, $description,$public) {
+			$data = array(
+			'uid'  => $uid,
+			'date' => $date,
+			'time' => $time,
+			'data' => $description,
+			'public' => $public
+		);
+		
+		return $this->db->where('uid',$uid)->where('date',$date)->where('time',$time)->update('events', $data);
+	
+	}
 	public function create_event($uid,$date, $time, $description,$public) {
 		
 		$data = array(

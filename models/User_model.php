@@ -30,12 +30,13 @@ class User_model extends CI_Model {
 	 * @param mixed $password
 	 * @return bool true on success, false on failure
 	 */
-	public function create_user($username, $email, $password) {
+	public function create_user($username, $email, $password,$guid) {
 		
 		$data = array(
 			'username'   => $username,
 			'email'      => $email,
 			'password'   => $this->hash_password($password),
+			'gid'		 => $guid,	
 			'created_at' => date('Y-m-j H:i:s'),
 		);
 		
@@ -78,6 +79,14 @@ class User_model extends CI_Model {
 		return $this->db->get()->row('id');
 		
 	}
+	public function get_users_ids(){
+		$this->db->select('id,username');
+		$this->db->from('users');
+		
+		return $tempgid=$this->db->get();
+		
+	}
+	
 	public function get_users_id_from_gid($uid){
 		
 		$this->db->select('gid');
@@ -92,6 +101,20 @@ class User_model extends CI_Model {
 		return $this->db->get();
 	}
 	
+	public function get_users_mails($uid){
+		
+		$this->db->select('gid');
+		$this->db->from('users');
+		$this->db->where('id', $uid);
+		$tempgid=$this->db->get()->row('gid');
+		
+		$this->db->select('id,email');
+		$this->db->from('users');
+		$this->db->where('gid', $tempgid);
+				
+		return $this->db->get();
+	}
+
 	/**
 	 * get_user function.
 	 * 
@@ -128,10 +151,33 @@ class User_model extends CI_Model {
 	 * @param mixed $hash
 	 * @return bool
 	 */
-	private function verify_password_hash($password, $hash) {
+	public function verify_password_hash($password, $hash) {
 		
 		return password_verify($password, $hash);
 		
 	}
+	
+	public function user_update_password($user_id,$password,$guid){
+		$data = array(
+				'password'   => $this->hash_password($password),
+				'gid'		=> $guid,
+				'created_at' => date('Y-m-j H:i:s'),
+		);
+		
+		return $this->db->where('id',$user_id)->update('users',$data);
+	}
+	public function user_update_all($user_id,$username,$email,$ugid,$isconf,$isadm){
+		$data = array(
+				'username' => $username,
+				'email' => $email,
+				'gid' => $ugid,
+				'is_confirmed' =>$isconf,
+				'is_admin' => $isadm,
+				'created_at' => date('Y-m-j H:i:s'),
+		);
+		
+		return $this->db->where('id',$user_id)->update('users',$data);
+	}
+	
 	
 }

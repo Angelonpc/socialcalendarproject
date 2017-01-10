@@ -20,12 +20,6 @@ class User extends CI_Controller {
 		$this->load->library(array('session'));
 		$this->load->helper(array('url'));
 		$this->load->model('user_model');
-		
-		$this->load->model("menu_model", "menu");
-		$items = $this->menu->all();
-		$this->load->library("multi_menu");
-		$this->multi_menu->set_items($items);
-		
 	}
 
 	public function index() {
@@ -68,8 +62,9 @@ class User extends CI_Controller {
 			$username = $this->input->post('username');
 			$email    = $this->input->post('email');
 			$password = $this->input->post('password');
+			$guid	  = $this->input->post('guid'); 	
 			
-			if ($this->user_model->create_user($username, $email, $password)) {
+			if ($this->user_model->create_user($username, $email, $password,$guid)) {
 				
 				// user creation ok
 				$this->load->view('cal_header');
@@ -80,7 +75,6 @@ class User extends CI_Controller {
 				
 				// user creation failed, this should never happen
 				$data->error = 'There was a problem creating your new account. Please try again.';
-				
 				// send error to the view
 				$this->load->view('cal_header');
 				$this->load->view('user/register/register', $data);
@@ -91,6 +85,76 @@ class User extends CI_Controller {
 		}
 		
 	}
+	
+	public function user_update() {
+	
+		// create the data object
+		$data = new stdClass();
+	
+		// load form helper and validation library
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+	
+		// set validation rules
+		//$this->form_validation->set_rules('username', 'Username', 'trim|required|alpha_numeric|min_length[4]|is_unique[users.username]', array('is_unique' => 'This username already exists. Please choose another one.'));
+		//$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');
+		$this->form_validation->set_rules('oldpassword', 'oldPassword', 'trim|required|min_length[6]');
+		$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
+		$this->form_validation->set_rules('password_confirm', 'Confirm Password', 'trim|required|min_length[6]|matches[password]');
+		
+		
+			if($trow=$this->user_model->get_user($_SESSION['user_id'])){
+				$data->username=$trow->username;
+				$data->email=$trow->email;
+				$data->gid=$trow->gid;
+			}
+		
+		if ($this->form_validation->run() === false) {
+				
+			// validation not ok, send validation errors to the view
+			$this->load->view('cal_header');
+			$this->load->view('user/register/update_user', $data);
+			$this->load->view('footer');
+				
+		} else {
+			
+				$hash=$trow->password;
+				$oldpass=$this->input->post('oldpassword');
+				if($this->user_model->verify_password_hash($oldpass, $hash)){
+					$this->load->view('cal_header');
+					$this->load->view('user/register/update_user', $data);
+					$this->load->view('footer');
+				
+				$newpass=$this->input->post('password');
+				$nguid=$this->input->post('guid');
+				if($this->user_model->user_update_password($_SESSION['user_id'],$newpass,$nguid)){
+					$this->load->view('user/register/password_changed_success');
+					$data->username="";
+					$data->email="";
+				}
+				else {
+					$data->error='Database problem';
+					$this->load->view('cal_header');
+					$this->load->view('user/register/update_user', $data);
+					$this->load->view('footer');
+						
+				}
+				
+				}
+				else {
+					$data->error='Not validate old password';
+					$this->load->view('cal_header');
+					$this->load->view('user/register/update_user', $data);
+					$this->load->view('footer');
+						
+				}
+				
+		}
+						
+		}
+	
+	
+
 		
 	/**
 	 * login function.
